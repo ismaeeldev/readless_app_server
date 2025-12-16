@@ -9,8 +9,7 @@ import fetch from "node-fetch";
 import fs from "fs/promises";
 import path from "path";
 import os from "os";
-const axios = require('axios');
-
+import axios from 'axios';
 
 dotenv.config();
 
