@@ -17,7 +17,7 @@ A robust Express.js backend for AI-powered PDF analysis workflows.
 2. **Configuration**
    Ensure your `.env` file is set up with necessary API keys (OpenAI, Pinecone, Google, etc.) and `BASE_URL`.
    ```env
-   BASE_URL=http://localhost:3000
+   BASE_URL=https://readless-app-server.vercel.app/
    PORT=3000
    ```
 

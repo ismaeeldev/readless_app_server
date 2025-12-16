@@ -9,18 +9,37 @@ import fetch from "node-fetch";
 import fs from "fs/promises";
 import path from "path";
 import os from "os";
+const axios = require('axios');
+
 
 dotenv.config();
 
 // Helper to download PDF locally (internal to this controller as mostly specific)
 // Or reuse from utils if applicable, but different implementation in original files.
 // Using standard implementation here.
+
+// async function downloadPdfFromUrl(url) {
+//     const response = await fetch(url);
+//     if (!response.ok) throw new Error("Unable to download PDF");
+//     const buf = Buffer.from(await response.arrayBuffer());
+//     const tempFilePath = path.join(os.tmpdir(), `temp_${Date.now()}_${Math.random().toString(36).substring(7)}.pdf`);
+//     await fs.writeFile(tempFilePath, buf);
+//     return tempFilePath;
+// }
+
+
 async function downloadPdfFromUrl(url) {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Unable to download PDF");
-    const buf = Buffer.from(await response.arrayBuffer());
-    const tempFilePath = path.join(os.tmpdir(), `temp_${Date.now()}_${Math.random().toString(36).substring(7)}.pdf`);
-    await fs.writeFile(tempFilePath, buf);
+    const tempFilePath = path.join(
+        os.tmpdir(),
+        `temp_${Date.now()}_${Math.random().toString(36).substring(7)}.pdf`
+    );
+
+    const response = await axios.get(url, {
+        responseType: 'arraybuffer', // ensures binary PDF is downloaded correctly
+        maxRedirects: 5,             // follow Cloudinary redirects
+    });
+
+    await fs.writeFile(tempFilePath, response.data);
     return tempFilePath;
 }
 
@@ -99,7 +118,7 @@ async function generatePdfSummaryLogic(pdfUrl, summaryType = "Standard Summary")
 
     } catch (error) {
         console.error("❌ Primary Chain Failed:", error);
- 
+
         if (!content) {
             throw new Error("PDF could not be processed. Possibly scanned / protected.");
         }
